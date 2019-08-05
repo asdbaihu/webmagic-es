@@ -1,0 +1,7 @@
+spring:
+  elasticsearch:
+    rest:
+      uris: https://cdhdev01.weichai.com:9200
+      username: elastic
+      password: 123456a?*
+

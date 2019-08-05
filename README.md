@@ -11,4 +11,9 @@
     * ${resultFileName}SortedByKey.txt:存储按字母排序的结果
     * ${resultFileName}SortedByValue.txt:存储按词频逆序排序的结果
 * 程序入口
-    程序入口类`WebMagicEsApplication`    
+    程序入口类`src/test/app/WebMagicTest`    
+
+## 异常处理
+
+1. javax.net.ssl.SSLException: Received fatal alert: protocol_version
+   
