@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+
+<head>
+    <title>Elastic search 文档</title>
+
+    <meta charset="UTF-8">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" th:href="@{/element/index.css}">
+    <!-- 先引入 Vue -->
+    <script th:src="@{/js/vue.js}"></script>
+    <!-- 引入组件库 -->
+    <script th:src="@{/element/index.js}"></script>
+    <script th:src="@{/js/jquery.min.js}"></script>
+
+    <style>
+        .el-select .el-input {
+            width: 150px;
+        }
+
+        .input-with-select .el-input-group__prepend {
+            background-color: #fff;
+        }
+
+        .summary {
+            margin-bottom: 4px;
+            color: #8a8a8a;
+            font-size: 14px;
+            line-height: 24px;
+        }
+
+        .title {
+            font-size: 24px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <el-row>
+        <el-col :span="12" :offset="6">
+            <el-input placeholder="请输入内容" v-model="keyword" class="input-with-select" @keyup.enter.native="search">
+                <el-select v-model="searchType" slot="prepend" placeholder="请选择">
+                    <el-option label="单词检索" value="term"></el-option>
+                    <el-option label="短语检索" value="phase"></el-option>
+                </el-select>
+                <el-button slot="append" type="primary" @click.native.prevent="search"
+                           icon="el-icon-search">搜索
+                </el-button>
+            </el-input>
+        </el-col>
+
+    </el-row>
+
+    <el-row>
+        <el-col :span="16" :offset="4" v-for="(content, index) in contents" :key="content.oid">
+            <el-card :body-style="{ padding: '0px' }">
+                <div class="clearfix" style="padding: 14px;">
+                    <div>
+                            <span class="title" v-html="content.title" @click="view(content.url)">
+                            </span>
+                        <el-rate v-model="content.score" style="float: right"></el-rate>
+                    </div>
+
+                    <span class="summary" v-html="content.content"></span>
+                    <div class="bottom clearfix">
+                        页码:{{index+1}}
+                        <time style="float: right">{{ content.date }}</time>
+                    </div>
+                </div>
+            </el-card>
+        </el-col>
+    </el-row>
+</div>
+</body>
+
+
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            visible: false,
+            value5: '100',
+            value3: true,
+            value4: true,
+            input3: '',
+            input4: '',
+            keyword: 'elasticsearch',
+            searchType: 'term',
+            logining: false,
+            rate: 1,
+            contents: []
+        },
+        methods: {
+            search: function () {
+                var loading = this.$loading({
+                    lock: true,
+                    text: 'Loading',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                });
+
+                var data = {
+                    keyword: this.keyword,  //参数
+                    userId: "1",
+                    pageSize: 100
+                };
+                var url = "http://localhost:8080/es/fullTextSearch";
+                //var url = "http://10.0.1.220/smartEs/search/fullTextSearch";
+                $.post(url, data)
+                    .then(function (response) {
+                        console.log(response);
+                        vm.contents = response.content;
+                        loading.close();
+                    });
+
+            },
+            view: function (url) {
+                console.log(url);
+                window.open(url, "_blank");
+
+            }
+        }
+    })
+</script>
+
+</html>
